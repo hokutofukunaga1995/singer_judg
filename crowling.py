@@ -1,4 +1,10 @@
-from settings import *
+import os
+import re
+import bs4
+import time
+import requests
+import pprint
+
 #サイトから特定の歌手の歌詞を集める
 
 
@@ -16,6 +22,7 @@ def pickup_tag(html, find_tag):
 
     return paragraphs
 
+
 #歌詞の整形
 def parse(html):
     soup = bs4.BeautifulSoup(str(html), 'html.parser')
@@ -32,23 +39,30 @@ def parse(html):
     return words_of_song
 
 
-def main():
+def excute():
     artist_url = input('歌詞データの欲しい歌手のuta-netページのurlをコピペしてください: ')
     while artist_url == '':
         artist_url = input('入力されていません。歌詞データの欲しい歌手のuta-netページのurlをコピペしてください: ')
     
     try:
-        search = re.search(r'[0-9]+', artist_url)
-        artist_number = search.group()
+        #ページの取得
+        html = load(artist_url)
 
-        txt_path = os.getcwd() + '\\' + artist_number + '.txt'
+        #アーティスト名取得
+        soup = bs4.BeautifulSoup(str(html), 'html.parser')
+        artist_name_td2 = soup.find(class_='td2')
+        artist_name_a = pickup_tag(artist_name_td2, 'a')[0]
+        print(artist_name_a)
+        artist_name = artist_name_a.getText()
+        
+        #テキスト名取得
+        txt_name = artist_name + '.txt'
+        txt_path = os.getcwd() + '/txt_files/' + txt_name
+        
         with open(txt_path, 'a') as f:
 
             # 曲ページの先頭アドレス
             base_url = 'https://www.uta-net.com'
-
-            #ページの取得
-            html = load(artist_url)
 
             #曲ごとのurlを格納
             musics_url = []
@@ -79,21 +93,20 @@ def main():
                         words_of_song = parse(div)
                         print(words_of_song, end = '\n\n')
                         # 歌詞を１つにまとめる
-                        words_of_songs += words_of_song + '\n_words_of_songs'
+                        words_of_songs += words_of_song + '\n'
 
                         # １秒待機
-                        time.sleep(2)
+                        time.sleep(4)
                         break
+
             # 歌詞の書き込み
             f.write(words_of_songs)
+            return txt_name 
     
     except TypeError:
         print('入力URLをお確かめください')
-        main()
+        excute()
 
-
-
-
-
-
-main()
+    except AttributeError:
+        print('URLが誤っています。入力URLをお確かめください')
+        excute()
