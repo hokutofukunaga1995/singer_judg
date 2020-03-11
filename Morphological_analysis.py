@@ -1,9 +1,9 @@
 import MeCab
-
+from settings import *
 
 def analyze(txt_name):
     #スクレイピングした歌詞のデータを取得
-    txt_path = 'txt_files/' + txt_name
+    txt_path = txt_files_path + txt_name
     words_of_song = open(txt_path, 'r').read()
 
     #曲ごとに区切る
@@ -28,6 +28,12 @@ def analyze(txt_name):
                 if not node.surface in stoplist and not node.surface.isdigit():
                     output.append(node.surface.upper())
             node = node.next
-        return output
+        #形態素解析された単語のリストをWordCloud用に処理している。
+        text = ' '.join(output)
+
+    return text
+    
+
+
 
 

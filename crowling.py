@@ -52,7 +52,6 @@ def excute():
         soup = bs4.BeautifulSoup(str(html), 'html.parser')
         artist_name_td2 = soup.find(class_='td2')
         artist_name_a = pickup_tag(artist_name_td2, 'a')[0]
-        print(artist_name_a)
         artist_name = artist_name_a.getText()
         
         #テキスト名取得
@@ -95,7 +94,7 @@ def excute():
                         # 歌詞を１つにまとめる
                         words_of_songs += words_of_song + '\n'
 
-                        # １秒待機
+                        # 4秒待機
                         time.sleep(4)
                         break
 
