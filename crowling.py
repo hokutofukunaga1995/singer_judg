@@ -18,9 +18,9 @@ def load(url):
 #htmlの中から歌詞を取得
 def pickup_tag(html, find_tag):
     soup = bs4.BeautifulSoup(str(html), 'html.parser')
-    paragraphs = soup.find_all(find_tag)
+    paragraphs_all = soup.find_all(find_tag)
 
-    return paragraphs
+    return paragraphs_all
 
 
 #歌詞の整形
@@ -70,19 +70,27 @@ def excute():
 
 
             """ 曲のurlを取得 """
-            # td要素の取り出し
+            # 50曲までのtd要素の取り出し
+            flag = 0
             for td in pickup_tag(html, 'td'):
                 # a要素の取り出し
                 for a in pickup_tag(td, 'a'):
                     # href属性にsongを含むか
                     if 'song' in a.get('href'): 
-                        # urlを配列に追加
-                        musics_url.append(base_url + a.get('href'))
+                        if flag < 50:
+                            # urlを配列に追加
+                            musics_url.append(base_url + a.get('href'))
+                            flag += 1
+                    else:
+                        break
+
+
 
             """ 歌詞の取得 """
             for i, page in enumerate(musics_url):
                 print('{}曲目:{}'.format(i + 1, page))
                 html = load(page)
+                time.sleep(2)
                 for div in pickup_tag(html, 'div'):
                     # id検索がうまく行えなかった為、一度strにキャスト
                     div = str(div)
@@ -95,12 +103,12 @@ def excute():
                         words_of_songs += words_of_song + '\n'
 
                         # 4秒待機
-                        time.sleep(4)
+                        time.sleep(2)
                         break
 
             # 歌詞の書き込み
             f.write(words_of_songs)
-            return txt_name 
+            return txt_name
     
     except TypeError:
         print('入力URLをお確かめください')

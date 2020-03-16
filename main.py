@@ -17,8 +17,8 @@ font_path = "/System/Library/Fonts/ヒラギノ角ゴシック W6.ttc"
 
 def main():
     txt_name = crowling.excute()
-    text = Morphological_analysis.analyze(txt_name)
-    word_of_songs_wordcloud.wordcloud(txt_name, text)
+    output = Morphological_analysis.analyze(txt_name)
+    word_of_songs_wordcloud.wordcloud(txt_name, output)
 
 
 if __name__ == '__main__':

@@ -13,10 +13,10 @@ def analyze(txt_name):
     mecab = MeCab.Tagger('-Ochasen')
     mecab.parse('')
 
+    output = []
     #一曲ごとに取得
     for i in range(num): 
         node = mecab.parseToNode(lines[i])
-        output = []
 
         #意味をなさないような単語を除外する。
         stoplist=['「', '」', 'じゅう', 'そこら', 'れる', 'くい','ん','よう','の']
@@ -28,12 +28,6 @@ def analyze(txt_name):
                 if not node.surface in stoplist and not node.surface.isdigit():
                     output.append(node.surface.upper())
             node = node.next
-        #形態素解析された単語のリストをWordCloud用に処理している。
-        text = ' '.join(output)
 
-    return text
-    
-
-
-
+    return output
 
